@@ -80,3 +80,27 @@ class Board:
             for row in self.board
         ]
         return json.dumps(board_json)
+    
+    @classmethod
+    def deserialize(cls, json_str: str) -> "Board":
+        """
+        Create a Board instance from a JSON string.
+        """
+        data = json.loads(json_str)
+        if not data:
+            raise ValueError("Empty board data")
+
+        height = len(data)
+        width = len(data[0]) if height > 0 else 0
+        board_instance = cls(width=width, height=height)
+
+        for row_idx, row_data in enumerate(data):
+            for col_idx, cell_data in enumerate(row_data):
+                # Reconstruct each cell
+                board_instance.board[row_idx][col_idx] = Cell(
+                    count=cell_data["count"],
+                    color=cell_data.get("color"),
+                    max_count=cell_data["max_count"]
+                )
+
+        return board_instance

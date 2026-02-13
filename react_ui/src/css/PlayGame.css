@@ -1,0 +1,109 @@
+.playgame-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #6b46c1, #3182ce);
+  font-family: "Inter", sans-serif;
+  padding-top: 2rem;
+  color: white;
+}
+
+.playgame-card {
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 1.5rem;
+  padding: 2.5rem;
+  max-width: 600px;
+  width: 90%;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  text-align: center;
+}
+
+.game-code {
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+  font-size: 1.25rem;
+}
+
+.story-piece-display {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: rgba(255,255,255,0.15);
+  border-radius: 1rem;
+}
+
+.final-piece-text {
+  font-weight: bold;
+  color: #ffd700;
+  margin-bottom: 0.5rem;
+}
+
+.write-next-piece {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.story-textarea {
+  width: 100%;
+  border-radius: 0.75rem;
+  padding: 0.75rem;
+  border: none;
+  resize: vertical;
+  font-size: 1rem;
+  min-height: 100px;
+}
+
+.btn.send-btn {
+  margin-top: 0.75rem;
+  background-color: #48bb78;
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border-radius: 0.75rem;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.btn.send-btn:hover {
+  background-color: #38a169;
+}
+
+.final-story-display {
+  padding: 1rem;
+  background: rgba(255,255,255,0.15);
+  border-radius: 1rem;
+  margin-top: 1rem;
+  text-align: left;
+}
+
+.final-story-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.final-story-subtitle {
+  font-style: italic;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.story-piece {
+  margin-bottom: .2rem;
+  padding: 0.2rem 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.3);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.story-author {
+  font-size: 0.85rem;
+  color: #e2e8f0;
+}
+
+.final-story-end {
+    text-align: center;
+}

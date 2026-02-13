@@ -1,0 +1,82 @@
+.home-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #6b46c1, #3182ce);
+  color: white;
+  font-family: "Inter", sans-serif;
+}
+
+.home-card {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 3rem;
+  border-radius: 1.5rem;
+  text-align: center;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  max-width: 400px;
+}
+
+.home-card h1 {
+  font-size: 2.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.home-card p {
+  color: #e2e8f0;
+  margin-bottom: 1.5rem;
+}
+
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+@media (min-width: 600px) {
+  .button-group {
+    flex-direction: row;
+    justify-content: center;
+  }
+}
+
+.btn {
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: white;
+}
+
+.create-btn {
+  background-color: #48bb78;
+}
+
+.create-btn:hover {
+  background-color: #38a169;
+}
+
+.join-btn {
+  background-color: #4299e1;
+}
+
+.join-btn:hover {
+  background-color: #3182ce;
+}
+
+.story-history-btn {
+  background-color: #7a42e1;
+}
+
+.story-history-btn:hover {
+  background-color: #6639d0;
+}
+
+.user-info {
+  font-size: 0.85rem;
+  color: #e2e8f0;
+  margin-top: 1rem;
+}
