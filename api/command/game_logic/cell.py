@@ -23,6 +23,7 @@ class Cell:
         self.count += 1
         if self.count > self.max_count:
             self.count = 0
+            self.color = None
             return True
         return False
     

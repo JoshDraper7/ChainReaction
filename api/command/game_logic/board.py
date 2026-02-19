@@ -46,7 +46,7 @@ class Board:
 
         return None
 
-    def _increment_cell_old(self, row: int, col: int, color: int, board_states: list[str]) -> None:
+    def _increment_cell(self, row: int, col: int, color: int, board_states: list[str]) -> None:
         queue = deque()
         queue.append((row, col))
 
@@ -79,7 +79,7 @@ class Board:
                 # to record board state
                 queue.append((None, None))
 
-    def _increment_cell(self, row: int, col: int, color: int, board_states: list[str]) -> None:
+    def _increment_cell_new(self, row: int, col: int, color: int, board_states: list[str]) -> None:
         queue = deque()
 
         result = self._inc_single_cell(row, col, color)

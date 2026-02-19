@@ -99,7 +99,6 @@ export function PlayGame() {
         LiveGameService.on("error", (err) => {
             console.log(`got error ${err.message}`)
             setError(err.message)
-            setBoardState(null)
         });
 
         LiveGameService.on("disconnect", (message) => {
@@ -165,7 +164,17 @@ export function PlayGame() {
     }
 
     const clickCell = (row: number, col: number, color: number, cell: Cell) => {
-        if (!user || !user.id || !gameId || !isTurn || !boardState) return;
+        
+        if (!user || !user.id || !gameId || !boardState) return;
+        if (!isTurn) {
+            setError("It isn't your turn!");
+            return;
+        }
+        if (cell.color !== null && cell.count > 0 && color !== cell.color) {
+            setError("You can't place a dot there.");
+            return;
+        }
+        console.log(`CLICKED`)
         const newBoard = boardState.map((r, _) =>
             r.map((cell, _) => {
                 return cell;
@@ -182,7 +191,7 @@ export function PlayGame() {
             col: col,
             cell: cell
         }) 
-        console.log("New Cell Clicked")
+        console.log(`New Cell Clicked ${newBoard[row][col].count}`)
     }
 
     const clickSubmit = () => {
@@ -203,6 +212,7 @@ export function PlayGame() {
     return (
         <div className="playgame-container">
             <div className="playgame-card">
+                {isTurn && <p>It's your turn!</p>}
                 {connectedError && <p className="error-text">{connectedError}</p>}
                 {error != null && <p className="error-text">{error}</p>}
                 {!boardState && error === null && <p>Loading board...</p>}
