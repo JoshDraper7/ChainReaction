@@ -35,23 +35,27 @@ class Board:
 
         return Cell(max_count=max_count)
 
-    def inc_cell_count(self, row: int, col: int, color: int) -> bool:
+    def inc_cell_count(self, row: int, col: int, color: int) -> list[str] | None:
         cell = self.board[row][col]
 
         if cell.get_color() is None or cell.get_color() == color:
             cell.change_color(color)
             board_states: list[str] = []
             self._increment_cell(row, col, color, board_states)
-            return True
+            return board_states
 
-        return False
+        return None
 
-    def _increment_cell(self, row: int, col: int, color: int, board_states: list[str]) -> None:
+    def _increment_cell_old(self, row: int, col: int, color: int, board_states: list[str]) -> None:
         queue = deque()
         queue.append((row, col))
 
         while queue:
             crow, ccol = queue.popleft()
+
+            if crow is None and ccol is None:
+                board_states.append(self.serialize())
+                continue
 
             # ✅ Correct boundary check
             if crow < 0 or crow >= self.height:
@@ -63,8 +67,6 @@ class Board:
             cell.change_color(color)
             exploded = cell.inc_count()
 
-            board_states.append(self.serialize())
-
             if exploded:
                 cell.change_color(None)
 
@@ -73,6 +75,52 @@ class Board:
                 queue.append((crow - 1, ccol))
                 queue.append((crow, ccol + 1))
                 queue.append((crow, ccol - 1))
+                
+                # to record board state
+                queue.append((None, None))
+
+    def _increment_cell(self, row: int, col: int, color: int, board_states: list[str]) -> None:
+        queue = deque()
+
+        result = self._inc_single_cell(row, col, color)
+        if result is not None:
+            queue.append(result)
+
+        while queue:
+            queue_list = list(queue)
+            for crow, ccol in queue_list:
+                _ = queue.popleft()
+            
+                if crow != self.height - 1:
+                    result = self._inc_single_cell(crow + 1, ccol, color)
+                    if result is not None:
+                        queue.append(result)
+                
+                if crow != 0:
+                    result = self._inc_single_cell(crow - 1, ccol, color)
+                    if result is not None:
+                        queue.append(result)
+
+                if ccol != self.width - 1:
+                    result = self._inc_single_cell(crow, ccol + 1, color)
+                    if result is not None:
+                        queue.append(result)
+                
+                if ccol != 0:
+                    result = self._inc_single_cell(crow, ccol - 1, color)
+                    if result is not None:
+                        queue.append(result)
+            
+            board_states.append(self.serialize())   
+            
+
+    def _inc_single_cell(self, row: int, col: int, color: int) -> tuple[int, int] | None:
+        cell: Cell = self.board[row][col]
+        cell.change_color(color)
+        exploded = cell.inc_count()
+        if exploded:
+            return row, col
+        return None
 
     def serialize(self) -> str:
         board_json = [

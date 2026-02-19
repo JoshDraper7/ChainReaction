@@ -61,8 +61,8 @@ export class LiveGameService {
             try {
                 const message = JSON.parse(event.data);
                 const { status, data } = message;
-                if (status === "story_ready") {
-                    this.emit("story_ready", data);
+                if (status === "new_game_state") {
+                    this.emit("new_game_state", data);
                 } else if (status === "game_finished") {
                     this.emit("game_finished", data);
                 } else if (status === "game_started") {
@@ -146,31 +146,15 @@ export class LiveGameService {
         this.send("start_game", { game_id: gameId });
     }
 
-    static nextStory(gameId: string, playerId: string) {
-        this.send("next_story", { game_id: gameId, player_id: playerId });
+    static getGameState(gameId: string, playerId: string) {
+        this.send("get_game_state", { game_id: gameId, player_id: playerId });
     }
 
-    static submitStoryPiece(gameId: string, playerId: string, storyId: string, storyPiece: string) {
-        this.send("submit_story_piece", { game_id: gameId, player_id: playerId, story_id: storyId, story_piece: storyPiece });
+    static submitCellIncrement(gameId: string, playerId: string, row: number, col: number) {
+        this.send("increment_cell", { game_id: gameId, player_id: playerId, row: row, col: col});
     }
 
     static getPlayerId(name: string, email: string) {
         this.send("get_player_id", { name, email });
-    }
-
-    static updateStoryTitle(gameId: string, playerId: string, storyId: string, newTitle: string) {
-        this.send("update_story_title", { game_id: gameId, player_id: playerId, story_id: storyId, new_title: newTitle });
-    }
-
-    static getStoryHistory(playerId: string) {
-        this.send("get_story_history", { player_id: playerId });
-    }
-
-    static getGameHistory(playerId: string) {
-        this.send("get_game_history", { player_id: playerId });
-    }
-
-    static removePlayer(gameId: string, playerId: string) {
-        this.send("remove_player", { game_id: gameId, player_id: playerId });
     }
 }

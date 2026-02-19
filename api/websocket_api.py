@@ -9,6 +9,7 @@ import json
 import asyncio
 import traceback
 
+from .command.exceptions.exceptions import CommandError
 
 def websocket_response_decorator(func): # type: ignore
     @wraps(func) # type: ignore
@@ -19,6 +20,8 @@ def websocket_response_decorator(func): # type: ignore
             print(f"Data to return: {result}")
             print()
             await websocket.send_json({"status": "success", "data": result})
+        except CommandError as e:
+            await websocket.send_json({"status": "error", "code": e.status_code, "message": e.message, "error": str(e), "response_type": "error"})
         except Exception as e:
             traceback.print_exc()
             await websocket.send_json({"status": "error", "code": 500, "message": "Unexpected Error", "error": traceback.format_exc(), "response_type": "error"})
@@ -39,6 +42,16 @@ class JoinGameRequest(BaseModel):
 
 class StartGameRequest(BaseModel):
     game_id: str
+
+class GetGameStateRequest(BaseModel):
+    game_id: str
+    player_id: str
+
+class IncrementCellRequest(BaseModel):
+    game_id: str
+    player_id: str
+    row: int
+    col: int
 
 class WebsocketConnection(TypedDict, total=False):
     websocket: WebSocket
@@ -69,6 +82,14 @@ class WebsocketGameAPI(GameAPI):
             request = StartGameRequest(**payload)
             response = super()._start_game(request.game_id)
             return response
+        elif action == "get_game_state":
+            request = GetGameStateRequest(**payload)
+            response = super()._get_game_state(request.game_id, request.player_id)
+            return response
+        elif action == "increment_cell":
+            request = IncrementCellRequest(**payload)
+            response = super()._increment_cell(**request.model_dump())
+            return response
         else:
             raise ValueError(f"Unknown action: {action}")
 
@@ -92,4 +113,13 @@ class WebsocketGameAPI(GameAPI):
             self.active_connections.pop(player_id)
             print("Client disconnected")
         except Exception as e:
-            await websocket.send_json({"status": "error", "message": str(e)})
+            traceback.print_exc()
+            await websocket.send_json({"status": "error", "message": traceback.format_exc()})
+
+    def _notify_players_of_new_state(self, intermittent_states: list[str]) -> None:
+        for _, websocket in self.active_connections.items():
+            asyncio.create_task(websocket.send_json({"status": "new_game_state", "data": {"intermittent_states": intermittent_states}}))
+
+    def _notify_players_of_game_start(self):
+        for player_id, websocket in self.active_connections.items():
+            asyncio.create_task(websocket.send_json({"status": "game_started", "data": {"player_id": player_id}}))

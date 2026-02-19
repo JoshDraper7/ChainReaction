@@ -34,9 +34,6 @@ class GamePlayer(SQLModel, table=True):
 
     game_id: str = Field(primary_key=True, foreign_key='GAME.id')
     player_id: str = Field(primary_key=True, foreign_key='PLAYER.id')
-    next_player_id: str = Field(nullable=False, foreign_key='PLAYER.id')
-    prev_player_id: str = Field(nullable=False, foreign_key=f'PLAYER.id')
-    is_head: bool = Field(nullable=False, default=False)
     modified_at: datetime = Field(nullable=False)
     created_at: datetime = Field(nullable=False)
 

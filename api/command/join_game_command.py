@@ -34,37 +34,19 @@ class JoinGameCommand(Command):
         stmt = insert(GamePlayer).values({
             "game_id": game_id, 
             "player_id": player_id, 
-            "next_player_id": player_id,
-            "prev_player_id": player_id,
-            "is_head": True,
             "created_at": datetime_now(),
             "modified_at": datetime_now()
         })
         self.database_service.execute(stmt)
 
     def _update_add_player(self, game_id: str, to_add_player_id: str, newest_player: GamePlayer) -> None:
-        update_head_stmt = update(GamePlayer).where(
-            and_(
-                col(GamePlayer.player_id) == newest_player.player_id,
-                col(GamePlayer.game_id) == game_id
-            )
-        ).values({"next_player_id": to_add_player_id, "modified_at": datetime_now()})
-        update_next_stmt = update(GamePlayer).where(
-            and_(
-                col(GamePlayer.player_id) == newest_player.next_player_id,
-                col(GamePlayer.game_id) == game_id
-            )
-        ).values({"prev_player_id": to_add_player_id, "modified_at": datetime_now()})
         insert_new = insert(GamePlayer).values({
             "game_id": game_id, 
             "player_id": to_add_player_id, 
-            "next_player_id": newest_player.next_player_id,
-            "prev_player_id": newest_player.player_id,
-            "is_head": False,
             "created_at": datetime_now(),
             "modified_at": datetime_now()
         })
-        self.database_service.execute_many([update_head_stmt, update_next_stmt, insert_new])
+        self.database_service.execute_many([insert_new])
 
     def _get_newest_game_player(self, game_id: str) -> GamePlayer:
         stmt = (
@@ -108,6 +90,4 @@ class JoinGameCommand(Command):
         games = self.database_service.select(stmt)
         if len(games) == 0:
             raise GameNotFoundError()
-        if games[0].started == True:
-            raise GameAlreadyStartedError()
         return games[0].id

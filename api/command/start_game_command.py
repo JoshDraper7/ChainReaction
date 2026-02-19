@@ -6,8 +6,7 @@ from .exceptions.exceptions import GameAlreadyStartedError, GameNotFoundError, G
 from .game_logic.board import Board
 
 from sqlmodel import update, select, col, and_, insert
-import random
-import string
+from uuid import uuid4
 
 
 class StartGameCommand(Command):
@@ -28,6 +27,7 @@ class StartGameCommand(Command):
     def _save_init_board_state(self, board: Board, game: Game) -> None:
         board_state = board.serialize()
         stmt = insert(GameState).values({
+            "id": str(uuid4()),
             "game_id": game.id,
             "state": board_state,
             "created_at": datetime_now()

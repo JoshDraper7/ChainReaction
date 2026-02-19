@@ -1,109 +1,58 @@
 .playgame-container {
   display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  min-height: 100vh;
+  justify-content: center; /* centers board horizontally */
+  align-items: center;     /* centers board vertically if needed */
+  height: 100vh;           /* full viewport height */
+  padding: 20px;
+  box-sizing: border-box;
   background: linear-gradient(135deg, #6b46c1, #3182ce);
-  font-family: "Inter", sans-serif;
-  padding-top: 2rem;
-  color: white;
 }
 
 .playgame-card {
-  background: rgba(255,255,255,0.1);
-  backdrop-filter: blur(10px);
-  border-radius: 1.5rem;
-  padding: 2.5rem;
-  max-width: 600px;
-  width: 90%;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-  text-align: center;
-}
-
-.game-code {
-  margin-bottom: 1.5rem;
-  font-weight: 600;
-  font-size: 1.25rem;
-}
-
-.story-piece-display {
-  margin-top: 1rem;
-  padding: 1rem;
-  background: rgba(255,255,255,0.15);
-  border-radius: 1rem;
-}
-
-.final-piece-text {
-  font-weight: bold;
-  color: #ffd700;
-  margin-bottom: 0.5rem;
-}
-
-.write-next-piece {
-  margin-top: 1.5rem;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.story-textarea {
+  justify-content: center;
   width: 100%;
-  border-radius: 0.75rem;
-  padding: 0.75rem;
-  border: none;
-  resize: vertical;
-  font-size: 1rem;
-  min-height: 100px;
+  height: 100%;
+  max-height: 90vh; /* board will not exceed 90% of viewport height */
 }
 
-.btn.send-btn {
-  margin-top: 0.75rem;
-  background-color: #48bb78;
-  color: white;
-  padding: 0.6rem 1.2rem;
-  border-radius: 0.75rem;
-  border: none;
+.board {
+  display: grid;
+  gap: 0px;
+  max-height: 100%; /* use up available height in card */
+  width: auto;      /* width will scale automatically to maintain square cells */
+  grid-auto-rows: 1fr; /* ensures equal row heights */
+}
+
+.board-cell {
+  aspect-ratio: 1 / 1;
+  border: 2px solid #000000;
+  display: flex;
+  flex-wrap: wrap;          /* allow multiple circles */
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  padding: 4px;             /* spacing for circles */
+  gap: 4px;                  /* spacing between circles */
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.cell-circle {
+  width: 20%;                 /* relative to cell size */
+  aspect-ratio: 1 / 1;        /* make it a perfect circle */
+  border-radius: 50%;
+  box-shadow: 0 0 2px #000;   /* optional for contrast */
+}
+
+
+.board-cell:hover {
+  background-color: #2a2a2a;
   cursor: pointer;
-  font-weight: 600;
+  transform: scale(1.03);
 }
 
-.btn.send-btn:hover {
-  background-color: #38a169;
-}
-
-.final-story-display {
-  padding: 1rem;
-  background: rgba(255,255,255,0.15);
-  border-radius: 1rem;
-  margin-top: 1rem;
-  text-align: left;
-}
-
-.final-story-title {
-  font-size: 1.5rem;
+.cell-count {
+  font-size: clamp(14px, 3vh, 28px); /* scales based on viewport height */
   font-weight: bold;
-  margin-bottom: 0.5rem;
-  text-align: center;
-}
-
-.final-story-subtitle {
-  font-style: italic;
-  margin-bottom: 1rem;
-  text-align: center;
-}
-
-.story-piece {
-  margin-bottom: .2rem;
-  padding: 0.2rem 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.3);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-.story-author {
-  font-size: 0.85rem;
-  color: #e2e8f0;
-}
-
-.final-story-end {
-    text-align: center;
+  color: white;
 }

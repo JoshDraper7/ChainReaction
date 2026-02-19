@@ -22,3 +22,12 @@ class JoinGameResponse(ResponseData):
     game_code: str
     already_joined: bool
 
+class GetGameStateResponse(ResponseData):
+    game_state: str
+    players_turn: bool
+    player_turn_number: int
+    num_players: int
+
+class IncrementCellResponse(ResponseData):
+    intermittent_states: list[str]
+
