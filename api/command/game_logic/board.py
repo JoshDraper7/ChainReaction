@@ -58,6 +58,9 @@ class Board:
         actions.append(BoardAction(row=row, col=col, action='increment', color=color))
 
         while queue:
+            if self.is_complete():
+                return actions
+            
             crow, ccol = queue.popleft()
 
             # ✅ Correct boundary check
@@ -87,6 +90,8 @@ class Board:
             queue.append(result)
 
         while queue:
+            if self.is_complete():
+                return
             queue_list = list(queue)
             for crow, ccol in queue_list:
                 _ = queue.popleft()
@@ -155,8 +160,10 @@ class Board:
     
     def is_complete(self) -> bool:
         colors = set()
+        count = 0
         for row in self.board:
             for cell in row:
                 if cell.color is not None:
                     colors.add(cell.color)
-        return len(colors) < 2
+                count += cell.count
+        return len(colors) < 2 and count > 1
