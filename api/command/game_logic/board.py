@@ -2,7 +2,13 @@ from .cell import Cell
 
 from collections import deque
 import json
+from typing import TypedDict, Literal
 
+class BoardAction(TypedDict):
+    row: int
+    col: int
+    action: Literal['increment', 'exploded']
+    color: int
 
 class Board:
 
@@ -35,27 +41,24 @@ class Board:
 
         return Cell(max_count=max_count)
 
-    def inc_cell_count(self, row: int, col: int, color: int) -> list[str] | None:
+    def inc_cell_count(self, row: int, col: int, color: int) -> list[BoardAction] | None:
         cell = self.board[row][col]
 
         if cell.get_color() is None or cell.get_color() == color:
             cell.change_color(color)
-            board_states: list[str] = []
-            self._increment_cell(row, col, color, board_states)
-            return board_states
+            actions = self._increment_cell(row, col, color)
+            return actions
 
         return None
 
-    def _increment_cell(self, row: int, col: int, color: int, board_states: list[str]) -> None:
+    def _increment_cell(self, row: int, col: int, color: int) -> list[BoardAction]:
         queue = deque()
         queue.append((row, col))
+        actions = []
+        actions.append(BoardAction(row=row, col=col, action='increment', color=color))
 
         while queue:
             crow, ccol = queue.popleft()
-
-            if crow is None and ccol is None:
-                board_states.append(self.serialize())
-                continue
 
             # ✅ Correct boundary check
             if crow < 0 or crow >= self.height:
@@ -66,18 +69,15 @@ class Board:
             cell: Cell = self.board[crow][ccol]
             cell.change_color(color)
             exploded = cell.inc_count()
-
+            
             if exploded:
-                cell.change_color(None)
-
-                # increment neighbors
+                actions.append(BoardAction(row=crow, col=ccol, action='exploded', color=color))
                 queue.append((crow + 1, ccol))
                 queue.append((crow - 1, ccol))
                 queue.append((crow, ccol + 1))
                 queue.append((crow, ccol - 1))
-                
-                # to record board state
-                queue.append((None, None))
+
+        return actions
 
     def _increment_cell_new(self, row: int, col: int, color: int, board_states: list[str]) -> None:
         queue = deque()
@@ -152,3 +152,11 @@ class Board:
                 )
 
         return board_instance
+    
+    def is_complete(self) -> bool:
+        colors = set()
+        for row in self.board:
+            for cell in row:
+                if cell.color is not None:
+                    colors.add(cell.color)
+        return len(colors) < 2

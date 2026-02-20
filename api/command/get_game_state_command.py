@@ -99,6 +99,4 @@ class GetGameStateCommand(Command):
             raise GameNotFoundError()
         if games[0].started == False:
             raise GameNotStartedError()
-        if games[0].complete == True:
-            raise GameCompleteError()
         return games[0]

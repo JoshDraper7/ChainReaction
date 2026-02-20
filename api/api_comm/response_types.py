@@ -29,5 +29,5 @@ class GetGameStateResponse(ResponseData):
     num_players: int
 
 class IncrementCellResponse(ResponseData):
-    intermittent_states: list[str]
+    board_actions: list[dict]
 

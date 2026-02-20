@@ -18,17 +18,19 @@ class JoinGameCommand(Command):
 
     @override
     def execute(self, game_code: str, player_id: str) -> tuple[str, bool]:
-        game_id = self._get_game_id(game_code)
+        game= self._get_game(game_code)
         _ = self._get_player_id(player_id)
         try:
-            self._validate_player_not_already_in_game(game_id, player_id)
-            newest_game_player = self._get_newest_game_player(game_id)
-            self._update_add_player(game_id, player_id, newest_game_player)
+            self._validate_player_not_already_in_game(game.id, player_id)
+            newest_game_player = self._get_newest_game_player(game.id)
+            if game.started:
+                raise GameAlreadyStartedError()
+            self._update_add_player(game.id, player_id, newest_game_player)
         except NoPlayers:
-            self._create_head_player(game_id, player_id)
+            self._create_head_player(game.id, player_id)
         except PlayerAlreadyInGameError:
-            return game_id, True
-        return game_id, False
+            return game.id, True
+        return game.id, False
 
     def _create_head_player(self, game_id: str, player_id: str) -> None:
         stmt = insert(GamePlayer).values({
@@ -81,7 +83,7 @@ class JoinGameCommand(Command):
             raise PlayerNotFoundError()
         return players[0]
 
-    def _get_game_id(self, game_code: str) -> str:
+    def _get_game(self, game_code: str) -> Game:
         stmt = select(Game).where(
             and_(
                 col(Game.code) == game_code
@@ -90,4 +92,4 @@ class JoinGameCommand(Command):
         games = self.database_service.select(stmt)
         if len(games) == 0:
             raise GameNotFoundError()
-        return games[0].id
+        return games[0]

@@ -16,6 +16,7 @@ from .command.join_game_command import JoinGameCommand
 from .command.start_game_command import StartGameCommand
 from .command.get_game_state_command import GetGameStateCommand
 from .command.increment_cell_command import IncrementCellCommand
+from .command.complete_game_command import CompleteGameCommand
 from .database_access.sql_model.sql_model_database_service import SQLModelDatabaseService
 
 
@@ -26,11 +27,15 @@ class GameAPI(ABC):
     def __init__(self, database_service: SQLModelDatabaseService) -> None:
         self.database_service = database_service
 
-    def _notify_players_of_new_state(self, intermittent_states: list[str]) -> None:
+    def _notify_players_of_new_state(self, board_actions: list[dict]) -> None:
         # Default implementation is empty
         pass
 
     def _notify_players_of_game_start(self) -> None:
+        # Default implementation is empty
+        pass
+
+    def _notify_players_of_game_complete(self, winner_name: str) -> None:
         # Default implementation is empty
         pass
     
@@ -64,7 +69,14 @@ class GameAPI(ABC):
         )
     
     def _increment_cell(self, game_id: str, player_id: str, row: int, col: int) -> IncrementCellResponse:
-        intermittent_states = IncrementCellCommand(self.database_service).execute(game_id, player_id, row, col)
-        self._notify_players_of_new_state(intermittent_states)
-        return IncrementCellResponse(intermittent_states=intermittent_states, message="success", response_type="increment_cell")
+        board_actions = IncrementCellCommand(self.database_service).execute(game_id, player_id, row, col)
+        self._notify_players_of_new_state(board_actions)
+        game_complete, player_name = self._check_game_end(game_id, player_id)
+        if game_complete:
+            print(f"GAME COMPLETE: {player_name}")
+            self._notify_players_of_game_complete(winner_name=player_name)
+        return IncrementCellResponse(board_actions=board_actions, message="success", response_type="increment_cell")
+    
+    def _check_game_end(self, game_id: str, player_id: str) -> tuple[bool, str | None]:
+        return CompleteGameCommand(self.database_service).execute(game_id, player_id)
     

@@ -116,10 +116,14 @@ class WebsocketGameAPI(GameAPI):
             traceback.print_exc()
             await websocket.send_json({"status": "error", "message": traceback.format_exc()})
 
-    def _notify_players_of_new_state(self, intermittent_states: list[str]) -> None:
+    def _notify_players_of_new_state(self, board_actions: list[dict]) -> None:
         for _, websocket in self.active_connections.items():
-            asyncio.create_task(websocket.send_json({"status": "new_game_state", "data": {"intermittent_states": intermittent_states}}))
+            asyncio.create_task(websocket.send_json({"status": "new_game_state", "data": {"board_actions": board_actions}}))
 
     def _notify_players_of_game_start(self):
         for player_id, websocket in self.active_connections.items():
             asyncio.create_task(websocket.send_json({"status": "game_started", "data": {"player_id": player_id}}))
+
+    def _notify_players_of_game_complete(self, winner_name: str):
+        for player_id, websocket in self.active_connections.items():
+            asyncio.create_task(websocket.send_json({"status": "game_finished", "data": {"winner": winner_name, "player_id": player_id}}))

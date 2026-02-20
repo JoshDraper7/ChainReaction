@@ -10,7 +10,7 @@ from .exceptions.exceptions import (
     NotPlayersTurnError, 
     CellIncrementError
 )
-from .game_logic.board import Board
+from .game_logic.board import Board, BoardAction
 from ..utils.datetime_helper import datetime_now
 
 from sqlmodel import update, select, col, and_, insert, desc
@@ -24,14 +24,14 @@ class IncrementCellCommand(Command):
         super().__init__()
         self.database_service = database_service
 
-    def execute(self, game_id: str, player_id: str, row: int, col: int) -> list[str]:
+    def execute(self, game_id: str, player_id: str, row: int, col: int) -> list[BoardAction]:
         game = self._validate_game(game_id)
         self._validate_player(player_id, game_id)
         player_order_num = self._validate_players_turn(game_id, player_id, game)
-        new_board_state, intermittent_states = self._increment_cell(game_id, row, col, player_order_num)
+        new_board_state, board_actions = self._increment_cell(game_id, row, col, player_order_num)
         self._save_new_board_state(new_board_state, game_id)
         self._increment_game_turn_count(game)
-        return intermittent_states
+        return board_actions
 
     def _increment_game_turn_count(self, game: Game) -> None:
         stmt = update(Game).where(col(Game.id) == game.id).values({
@@ -48,13 +48,13 @@ class IncrementCellCommand(Command):
         })
         self.database_service.execute(stmt)
 
-    def _increment_cell(self, game_id, row, col, player_order_num) -> tuple[str, list[str]]:
+    def _increment_cell(self, game_id, row, col, player_order_num) -> tuple[str, list[BoardAction]]:
         game_state = self._get_current_game_state(game_id)
         board = Board.deserialize(game_state.state)
-        board_states = board.inc_cell_count(row, col, player_order_num)
-        if board_states is None:
+        board_actions = board.inc_cell_count(row, col, player_order_num)
+        if board_actions is None:
             raise CellIncrementError()
-        return board.serialize(), board_states
+        return board.serialize(), board_actions
 
     def _validate_players_turn(self, game_id, player_id, game):
         player_order_num, num_players = self._get_player_order_num(game_id, player_id)
