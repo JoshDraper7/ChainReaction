@@ -327,8 +327,8 @@ export function PlayGame() {
             row: row,
             col: col,
             cell: cell
-        }) 
-        console.log(`New Cell Clicked ${newBoard[row][col].count}`)
+        }) ;
+        setError(null);
     }
 
     const clickSubmit = () => {
@@ -354,13 +354,7 @@ export function PlayGame() {
 
     return (
         <div className="playgame-container">
-            <div className="playgame-card">
-                {isTurn && <p>It's your turn!</p>}
-                {connectedError && <p className="error-text">{connectedError}</p>}
-                {error != null && <p className="error-text">{error}</p>}
-                {!boardState && error === null && <p>Loading board...</p>}
-                {winningColor !== null && <p>{winningColor} wins!</p>}
-
+            <div className="playgame-board">
                 {boardState != null && numPlayers != null && playerTurnNumber != null && (
                     <div
                     className="board"
@@ -397,14 +391,28 @@ export function PlayGame() {
                     )}
                     </div>
                 )}
-
+            </div>
+            <div className="playgame-info">
+                {connectedError && <p className="error-text">{connectedError}</p>}
+                {error != null && <p className="error-text">{error}</p>}
+                
+                {gameCode && <p className="game-code">Game Code: {gameCode}</p>}
+                
+                {!boardState && error === null && (
+                    <p className="loading-text">Loading board...</p>
+                )}
+                {winningColor && (
+                    <p className="winner-text">{winningColor} wins!</p>
+                )}
+                
+                {isTurn && winningColor === null && <p className="turn-indicator">It's your turn!</p>}
                 {currClickedCell && (
-                    <div>
-                        <p>{currClickedCell.row}</p>
-                        <p>{currClickedCell.col}</p>
-                        <p>{currClickedCell.cell.count}</p>
-                        <button className="btn" onClick={() => clickSubmit()}>
-                            Submit Placement
+                    <div className="cell-action-panel">
+                        <p>Row: {currClickedCell.row}</p>
+                        <p>Col: {currClickedCell.col}</p>
+                        <p>Count: {currClickedCell.cell.count}</p>
+                        <button className="btn" onClick={clickSubmit}>
+                        Submit Placement
                         </button>
                     </div>
                 )}
