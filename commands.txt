@@ -1,0 +1,2 @@
+ngrok http --url=moth-large-yearly.ngrok-free.app http://localhost:8501
+uvicorn server:app --reload
