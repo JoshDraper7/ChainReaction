@@ -10,8 +10,9 @@ import {
     type GameHistoryResponse
 } from "../types/response";
 
-const BASE_URL = "http://localhost:8000";
-// const BASE_URL = "https://moth-large-yearly.ngrok-free.app"
+// const BASE_URL = "http://localhost:8000";
+// const BASE_URL = "http://100.111.94.20:8000";
+const BASE_URL = "https://moth-large-yearly.ngrok-free.app"
 
 export class GameService {
     /** Helper to handle errors consistently */

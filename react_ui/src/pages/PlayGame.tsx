@@ -120,7 +120,7 @@ export function PlayGame() {
         });
 
         LiveGameService.on("game_started", (data) => {
-            console.log(`Game started`)
+            console.log(`Game started ${data}`)
             getGameState()
         });
 
@@ -166,6 +166,9 @@ export function PlayGame() {
         }
 
         const runAnimations = async () => {
+            if (boardStateRef.current === null) {
+                return;
+            }
             const action = boardActions[0]
             if (action.action === "increment") {
                 setBoardState(prev => {
@@ -332,7 +335,11 @@ export function PlayGame() {
     }
 
     const clickSubmit = () => {
-        if (!user || !user.id || !gameId || !isTurn || !boardState || !currClickedCell) return;
+        if (!user || !user.id || !gameId || !isTurn || !boardState) return;
+        if (!currClickedCell) {
+            setError("You haven't clicked a cell.")
+            return;
+        }
         try {
             setBoardState(prev => {
                 if (!prev) return null;
@@ -342,6 +349,7 @@ export function PlayGame() {
             });
             LiveGameService.submitCellIncrement(gameId, user.id, currClickedCell.row, currClickedCell.col)
             setCurrClickedCell(null)
+            setError(null)
         } catch (err) {
             if (err instanceof WebSocketDisconnectedError) {
                 setConnectedError("Cannot send. You are disconnected from the game. Attempting to reconnect...")
@@ -406,16 +414,19 @@ export function PlayGame() {
                 )}
                 
                 {isTurn && winningColor === null && <p className="turn-indicator">It's your turn!</p>}
-                {currClickedCell && (
-                    <div className="cell-action-panel">
-                        <p>Row: {currClickedCell.row}</p>
-                        <p>Col: {currClickedCell.col}</p>
-                        <p>Count: {currClickedCell.cell.count}</p>
-                        <button className="btn" onClick={clickSubmit}>
-                        Submit Placement
-                        </button>
-                    </div>
-                )}
+                
+                <div className="cell-action-panel">
+                    {currClickedCell && <p>Row: {currClickedCell.row}</p>}
+                    {currClickedCell && <p>Col: {currClickedCell.col}</p>}
+                    {currClickedCell && <p>Count: {currClickedCell.cell.count}</p>}
+                    {!currClickedCell && <p>Row: </p>}
+                    {!currClickedCell && <p>Col: </p>}
+                    {!currClickedCell && <p>Count: </p>}
+                    <button className="btn" onClick={clickSubmit}>
+                    Submit Placement
+                    </button>
+                </div>
+                
             </div>
         </div>
     );

@@ -40,14 +40,14 @@ WebsocketGameAPI(database_service, router)
 app.include_router(router)
 
 # FOR REACT SERVICE ONCE I HAVE IT
-# frontend_dir = os.path.join(os.path.dirname(__file__), "./react_ui/dist")
-# app.mount("/assets", StaticFiles(directory=os.path.join(frontend_dir, "assets")), name="assets")
+frontend_dir = os.path.join(os.path.dirname(__file__), "./react_ui/dist")
+app.mount("/assets", StaticFiles(directory=os.path.join(frontend_dir, "assets")), name="assets")
 
-# @app.get("/{full_path:path}")
-# async def serve_react_app(full_path: str) -> FileResponse:
-#     return FileResponse(os.path.join(frontend_dir, "index.html"))
+@app.get("/{full_path:path}")
+async def serve_react_app(full_path: str) -> FileResponse:
+    return FileResponse(os.path.join(frontend_dir, "index.html"))
 
 if __name__ == "__main__":
     import uvicorn
     print("Booting up...")
-    uvicorn.run(app, host="0.0.0.0", port=8000, log_level='info')
+    uvicorn.run(app, host="0.0.0.0", port=8501, log_level='info')

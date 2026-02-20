@@ -2,7 +2,7 @@ from .command import Command
 from ..database_access.sql_model.sql_model_database_service import SQLModelDatabaseService
 from ..models.models import Game
 from ..utils.datetime_helper import datetime_now
-from .exceptions.exceptions import GenerateCodeError
+from .exceptions.exceptions import GenerateCodeError, BoardDimensionError
 
 from sqlmodel import insert, select, col, and_
 from uuid import uuid4
@@ -23,6 +23,13 @@ class CreateGameCommand(Command):
         self.database_service = database_service
 
     def execute(self, board_width: int, board_height: int) -> tuple[str, str]:
+        if board_width > 15:
+            raise BoardDimensionError()
+        if board_height > 15:
+            raise BoardDimensionError()
+        # if board_height > board_width:
+        #     raise BoardDimensionError()
+        
         id = str(uuid4())
         code = self._generate_unique_game_code()
         query = insert(Game).values(

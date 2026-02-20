@@ -11,8 +11,8 @@ export function CreateGame() {
   const { user, setUser } = useUserContext();
   const { gameId, gameCode, setGameCode, setGameId } = useGameContext();
 
-  const [boardWidth, setBoardWidth] = useState<number>(6);
-  const [boardHeight, setBoardHeight] = useState<number>(9);
+  const [boardWidth, setBoardWidth] = useState<number>(8);
+  const [boardHeight, setBoardHeight] = useState<number>(8);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -69,7 +69,7 @@ export function CreateGame() {
                 id="board-width"
                 type="number"
                 min={4}
-                max={20}
+                max={12}
                 value={boardWidth}
                 onChange={(e) => setBoardWidth(Number(e.target.value))}
               />
@@ -80,7 +80,7 @@ export function CreateGame() {
                 id="board-height"
                 type="number"
                 min={4}
-                max={20}
+                max={12}
                 value={boardHeight}
                 onChange={(e) => setBoardHeight(Number(e.target.value))}
               />

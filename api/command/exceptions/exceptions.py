@@ -67,3 +67,7 @@ class NotPlayersTurnError(CommandError):
 class CellIncrementError(CommandError):
     message = "Unable to increment cell."
     status_code = HTTPStatus.BAD_REQUEST  # 400
+
+class BoardDimensionError(CommandError):
+    message = "Board width & hieght must be less than 15."
+    status_code = HTTPStatus.BAD_REQUEST  # 400

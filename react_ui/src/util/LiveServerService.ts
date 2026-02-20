@@ -22,9 +22,10 @@ export class LiveGameService {
         if (this.socket && this.status === "connected") return;
 
         this.status = "connecting";
-        this.socket = new WebSocket(`ws://localhost:8000/ws/game?player_id=${player_id}`);
+        // this.socket = new WebSocket(`ws://localhost:8000/ws/game?player_id=${player_id}`);
+        // this.socket = new WebSocket(`ws://100.111.94.20:8000/ws/game?player_id=${player_id}`);
         // this.socket = new WebSocket(`wss://localhost:8000/ws/game?player_id=${player_id}`);
-        // this.socket = new WebSocket(`wss://moth-large-yearly.ngrok-free.app/ws/game?player_id=${player_id}`);
+        this.socket = new WebSocket(`wss://moth-large-yearly.ngrok-free.app/ws/game?player_id=${player_id}`);
 
         this.socket.onopen = () => {
             console.log("[WebSocket] Connected");
